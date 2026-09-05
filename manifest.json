@@ -1,0 +1,11 @@
+{
+  "name":"Orações — Um momento com Deus",
+  "short_name":"Orações",
+  "description":"Orações diárias para fortalecer sua fé e esperança.",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#17120d",
+  "theme_color":"#17120d",
+  "lang":"pt-BR",
+  "icons":[]
+}
