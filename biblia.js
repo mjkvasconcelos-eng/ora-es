@@ -1,15 +1,14 @@
-const DEFAULT_PDF='https://archive.org/download/bibliasagradacon00alme/bibliasagradacon00alme.pdf';
+const DEFAULT_PDF='./biblia.pdf';
 const PAGE_KEY='voz-do-pai-biblia-page';
-const PDF_KEY='voz-do-pai-biblia-source';
 const canvas=document.getElementById('pdfCanvas');
 const ctx=canvas.getContext('2d');
 const loading=document.getElementById('loading');
 const pageNumber=document.getElementById('pageNumber');
 const pageCount=document.getElementById('pageCount');
 const resumeLabel=document.getElementById('resumeLabel');
-let pdfDoc=null,pageNum=Math.max(1,parseInt(localStorage.getItem(PAGE_KEY)||'1',10)||1),rendering=false,pendingPage=null,objectUrl=null;
+let pdfDoc=null,pageNum=Math.max(1,parseInt(localStorage.getItem(PAGE_KEY)||'1',10)||1),rendering=false,pendingPage=null;
 
-if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 function savePage(){if(pdfDoc)localStorage.setItem(PAGE_KEY,String(pageNum));}
 function updateControls(){pageNumber.value=pageNum;pageCount.textContent=`/ ${pdfDoc?pdfDoc.numPages:'—'}`;resumeLabel.textContent=`Página ${pageNum}${pdfDoc?' de '+pdfDoc.numPages:''} · salva automaticamente`;}
@@ -20,26 +19,39 @@ async function renderPage(num){
   if(rendering){pendingPage=num;return;}
   rendering=true;loading.textContent='Abrindo página…';loading.style.display='block';
   try{
-    const page=await pdfDoc.getPage(num);const viewport=page.getViewport({scale:1.45});
-    const maxWidth=Math.min(window.innerWidth-24,900);const scale=Math.min(1.45,maxWidth/viewport.width);const v=page.getViewport({scale});
-    const ratio=window.devicePixelRatio||1;canvas.width=Math.floor(v.width*ratio);canvas.height=Math.floor(v.height*ratio);canvas.style.width=`${v.width}px`;canvas.style.height=`${v.height}px`;
-    ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,v.width,v.height);
-    await page.render({canvasContext:ctx,viewport:v}).promise;
-  }catch(e){loading.textContent='Não foi possível abrir esta página. Tente novamente.';console.error(e)}
+    const page=await pdfDoc.getPage(num);
+    const base=page.getViewport({scale:1});
+    const maxWidth=Math.max(280,Math.min(window.innerWidth-12,1100));
+    const maxHeight=Math.max(400,window.innerHeight-135);
+    const scale=Math.min(maxWidth/base.width,maxHeight/base.height);
+    const viewport=page.getViewport({scale});
+    const ratio=window.devicePixelRatio||1;
+    canvas.width=Math.floor(viewport.width*ratio);canvas.height=Math.floor(viewport.height*ratio);
+    canvas.style.width=`${viewport.width}px`;canvas.style.height=`${viewport.height}px`;
+    ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,viewport.width,viewport.height);
+    await page.render({canvasContext:ctx,viewport}).promise;
+  }catch(e){loading.textContent='Não foi possível abrir esta página.';console.error(e)}
   finally{rendering=false;loading.style.display='none';if(pendingPage&&pendingPage!==pageNum){const next=pendingPage;pendingPage=null;renderPage(next)}else pendingPage=null;}
 }
 async function openSource(source){
   loading.textContent='Carregando a Bíblia…';loading.style.display='block';
-  try{pdfDoc=await pdfjsLib.getDocument(source).promise;if(pageNum>pdfDoc.numPages)pageNum=pdfDoc.numPages;updateControls();await renderPage(pageNum);}catch(e){loading.textContent='Não foi possível carregar este PDF. Você pode selecionar um PDF da Bíblia no botão ＋.';console.error(e)}
+  try{pdfDoc=await pdfjsLib.getDocument(source).promise;if(pageNum>pdfDoc.numPages)pageNum=pdfDoc.numPages;updateControls();await renderPage(pageNum)}
+  catch(e){loading.textContent='Não foi possível carregar a Bíblia. Verifique se o arquivo biblia.pdf está no repositório.';console.error(e)}
 }
 
 document.getElementById('prevPage').onclick=()=>renderPage(pageNum-1);
 document.getElementById('nextPage').onclick=()=>renderPage(pageNum+1);
 pageNumber.onchange=()=>renderPage(parseInt(pageNumber.value,10)||1);
-document.getElementById('continueBtn').onclick=()=>renderPage(parseInt(localStorage.getItem(PAGE_KEY)||'1',10)||1);
-document.getElementById('resetBtn').onclick=()=>{pageNum=1;savePage();renderPage(1)};
 document.getElementById('backBible').onclick=()=>history.length>1?history.back():(location.href='index.html');
-document.getElementById('pdfFile').onchange=e=>{const file=e.target.files&&e.target.files[0];if(!file)return;if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(file);pageNum=1;localStorage.setItem(PAGE_KEY,'1');localStorage.setItem(PDF_KEY,file.name);openSource(objectUrl)};
+
+document.getElementById('fullscreenBtn').onclick=async()=>{
+  try{
+    if(!document.fullscreenElement){await document.documentElement.requestFullscreen();document.getElementById('fullscreenBtn').textContent='⛶'}
+    else await document.exitFullscreen();
+    setTimeout(()=>renderPage(pageNum),150);
+  }catch(e){console.error(e)}
+};
+document.addEventListener('fullscreenchange',()=>setTimeout(()=>renderPage(pageNum),100));
 window.addEventListener('resize',()=>{if(pdfDoc)renderPage(pageNum)});
 window.addEventListener('beforeunload',savePage);
 updateControls();
