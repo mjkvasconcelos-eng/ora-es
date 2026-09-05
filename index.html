@@ -10,52 +10,19 @@
   <title>Orações — Um momento com Deus</title>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div><span class="eyebrow">MOMENTO DE FÉ</span><h1>Orações</h1></div>
-      <button id="themeBtn" class="icon-btn" aria-label="Alternar tema">☾</button>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div class="hero-content">
-          <span class="pill">✦ Deus está contigo</span>
-          <h2>Comece o dia em oração.</h2>
-          <p>Reserve alguns minutos para agradecer, pedir direção e entregar suas preocupações a Deus.</p>
-          <button class="primary" data-scroll="daily">Fazer minha oração <span>→</span></button>
-        </div>
-      </section>
-
-      <section id="daily" class="section">
-        <div class="section-heading"><div><span class="eyebrow">PARA HOJE</span><h2>Oração do dia</h2></div><span id="dateLabel"></span></div>
-        <article class="prayer-card featured">
-          <div class="card-icon">🙏</div><h3>Oração de proteção e paz</h3>
-          <p>Senhor meu Deus, entrego este dia em Tuas mãos. Guarda minha vida, minha família e todos aqueles que amo. Dá-me sabedoria para tomar decisões, força para enfrentar as dificuldades e serenidade para não perder a fé. Que a Tua presença esteja comigo em cada caminho. Afasta de mim aquilo que não vem de Ti e abre as portas que forem segundo a Tua vontade. Obrigado por mais um dia, pela vida e por todas as bênçãos que muitas vezes não percebo. Em nome de Jesus, amém.</p>
-          <button class="read-btn" data-prayer="Oração de proteção e paz">▶ Ouvir oração</button>
-        </article>
-      </section>
-
-      <section class="section">
-        <div class="section-heading"><div><span class="eyebrow">ESCOLHA UM MOMENTO</span><h2>Orações para você</h2></div></div>
-        <div class="grid">
-          <button class="prayer-card small" data-open="morning"><span>🌅</span><h3>Bom dia</h3><p>Entregue o novo dia a Deus.</p></button>
-          <button class="prayer-card small" data-open="night"><span>🌙</span><h3>Boa noite</h3><p>Acalme o coração antes de dormir.</p></button>
-          <button class="prayer-card small" data-open="family"><span>❤️</span><h3>Família</h3><p>Ore por quem você ama.</p></button>
-          <button class="prayer-card small" data-open="health"><span>🕊️</span><h3>Saúde e cura</h3><p>Coloque suas preocupações diante de Deus.</p></button>
-          <button class="prayer-card small" data-open="gratitude"><span>✨</span><h3>Agradecimento</h3><p>Reconheça as bênçãos recebidas.</p></button>
-          <button class="prayer-card small" data-open="anxiety"><span>🤍</span><h3>Ansiedade</h3><p>Entregue suas inquietações a Deus.</p></button>
-        </div>
-      </section>
-
-      <section class="verse section"><span class="eyebrow">VERSÍCULO DO DIA</span><blockquote>“Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.”</blockquote><cite>Salmos 37:5</cite></section>
-
-      <section class="section favorites-section"><div class="section-heading"><div><span class="eyebrow">SEU MOMENTO</span><h2>Favoritos</h2></div></div><div id="favorites" class="empty">Toque no coração de uma oração para salvá-la aqui.</div></section>
-    </main>
-
-    <nav class="bottom-nav"><button class="active" data-nav="home">⌂<small>Início</small></button><button data-scroll="daily">🙏<small>Orar</small></button><button data-nav="favorites">♡<small>Favoritos</small></button></nav>
-  </div>
-
-  <dialog id="prayerDialog"><button class="close" id="closeDialog">×</button><span id="dialogEmoji">🙏</span><h2 id="dialogTitle"></h2><p id="dialogText"></p><div class="dialog-actions"><button class="primary" id="speakBtn">▶ Ouvir</button><button class="secondary" id="favBtn">♡ Favoritar</button></div></dialog>
-  <script src="app.js"></script>
-</body>
-</html>
+<div class="app-shell">
+<header class="topbar"><div><span class="eyebrow">MOMENTO DE FÉ</span><h1>Orações</h1></div><button id="themeBtn" class="icon-btn" aria-label="Alternar tema">☾</button></header>
+<main>
+<section class="hero"><div class="hero-content"><span class="pill">✦ Deus está contigo</span><h2>Comece o dia em oração.</h2><p>Reserve alguns minutos para agradecer, pedir direção e entregar suas preocupações a Deus.</p><button class="primary" data-scroll="daily">Fazer minha oração <span>→</span></button></div></section>
+<section id="daily" class="section"><div class="section-heading"><div><span class="eyebrow">PARA HOJE</span><h2>Oração do dia</h2></div><span id="dateLabel"></span></div><article class="prayer-card featured"><div class="card-icon">🙏</div><h3>Oração de proteção e paz</h3><p id="dailyText">Senhor meu Deus, entrego este dia em Tuas mãos. Guarda minha vida, minha família e todos aqueles que amo. Dá-me sabedoria para tomar decisões, força para enfrentar as dificuldades e serenidade para não perder a fé. Que a Tua presença esteja comigo em cada caminho. Afasta de mim aquilo que não vem de Ti e abre as portas que forem segundo a Tua vontade. Obrigado por mais um dia, pela vida e por todas as bênçãos que muitas vezes não percebo. Em nome de Jesus, amém.</p><div class="card-actions"><button class="read-btn" id="dailySpeak">▶ Ouvir oração</button><button class="heart-btn" id="dailyFav" aria-label="Favoritar oração">♡</button><button class="share-btn" id="dailyShare" aria-label="Compartilhar oração">↗</button></div></article></section>
+<section class="section"><div class="section-heading"><div><span class="eyebrow">ENCONTRE SUA ORAÇÃO</span><h2>Orações para você</h2></div></div><div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Pesquisar oração..." aria-label="Pesquisar oração" /></div><div id="categoryGrid" class="grid">
+<button class="prayer-card small" data-open="morning"><span>🌅</span><h3>Bom dia</h3><p>Entregue o novo dia a Deus.</p></button><button class="prayer-card small" data-open="night"><span>🌙</span><h3>Boa noite</h3><p>Acalme o coração antes de dormir.</p></button><button class="prayer-card small" data-open="protection"><span>🛡️</span><h3>Proteção</h3><p>Peça cuidado para você e sua família.</p></button><button class="prayer-card small" data-open="family"><span>❤️</span><h3>Família</h3><p>Ore por quem você ama.</p></button><button class="prayer-card small" data-open="health"><span>🕊️</span><h3>Saúde e cura</h3><p>Coloque suas preocupações diante de Deus.</p></button><button class="prayer-card small" data-open="gratitude"><span>✨</span><h3>Agradecimento</h3><p>Reconheça as bênçãos recebidas.</p></button><button class="prayer-card small" data-open="anxiety"><span>🤍</span><h3>Ansiedade</h3><p>Entregue suas inquietações a Deus.</p></button><button class="prayer-card small" data-open="faith"><span>🔥</span><h3>Fé</h3><p>Fortaleça sua confiança em Deus.</p></button><button class="prayer-card small" data-open="guidance"><span>🧭</span><h3>Direção</h3><p>Peça sabedoria para suas escolhas.</p></button><button class="prayer-card small" data-open="work"><span>💼</span><h3>Trabalho</h3><p>Consagre seus projetos e seu sustento.</p></button><button class="prayer-card small" data-open="children"><span>👨‍👩‍👧</span><h3>Filhos</h3><p>Coloque seus filhos nas mãos de Deus.</p></button><button class="prayer-card small" data-open="peace"><span>🕊️</span><h3>Paz</h3><p>Silencie o coração e descanse em Deus.</p></button>
+</div><p id="noResults" class="empty hidden">Nenhuma oração encontrada.</p></section>
+<section class="verse section"><span class="eyebrow">VERSÍCULO DO DIA</span><blockquote>“Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.”</blockquote><cite>Salmos 37:5</cite></section>
+<section class="section favorites-section"><div class="section-heading"><div><span class="eyebrow">SEU MOMENTO</span><h2>Favoritos</h2></div></div><div id="favorites" class="empty">Toque no coração de uma oração para salvá-la aqui.</div></section>
+</main>
+<nav class="bottom-nav"><button class="active" data-nav="home">⌂<small>Início</small></button><button data-scroll="daily">🙏<small>Orar</small></button><button data-nav="favorites">♡<small>Favoritos</small></button></nav>
+</div>
+<dialog id="prayerDialog"><button class="close" id="closeDialog">×</button><span id="dialogEmoji">🙏</span><h2 id="dialogTitle"></h2><p id="dialogText"></p><div class="dialog-actions"><button class="primary" id="speakBtn">▶ Ouvir</button><button class="secondary" id="favBtn">♡ Favoritar</button><button class="secondary" id="shareBtn">↗ Compartilhar</button></div></dialog>
+<script src="app.js"></script>
+</body></html>
