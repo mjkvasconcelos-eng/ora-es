@@ -1,0 +1,44 @@
+name: Gerar áudios ElevenLabs
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Regenerar mesmo os MP3 que já existem'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Gerar 20 MP3 com ElevenLabs
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+          FORCE_REGENERATE: ${{ inputs.force }}
+        run: node scripts/generate-elevenlabs-audio.mjs
+
+      - name: Salvar MP3s no GitHub
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio/elevenlabs
+          if git diff --cached --quiet; then
+            echo "Nenhum áudio novo para salvar."
+          else
+            git commit -m "Add ElevenLabs prayer audios"
+            git push
+          fi
