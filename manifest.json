@@ -1,12 +1,28 @@
 {
-  "name":"Voz do Pai — Orar é falar com Deus",
-  "short_name":"Voz do Pai",
-  "description":"Orações diárias para fortalecer sua fé e esperança.",
-  "start_url":"./",
-  "scope":"./",
-  "display":"standalone",
-  "background_color":"#17120d",
-  "theme_color":"#17120d",
-  "lang":"pt-BR",
-  "icons":[]
+  "name": "Voz do Pai — Orar é falar com Deus",
+  "short_name": "Voz do Pai",
+  "description": "Orações diárias para fortalecer sua fé e esperança.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#17120d",
+  "lang": "pt-BR",
+  "categories": ["lifestyle", "books", "religion"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
