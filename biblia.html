@@ -1,23 +1,33 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#000000"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><title>Bíblia Sagrada — Voz do Pai</title>
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="biblia.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070604">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Bíblia Sagrada — Voz do Pai</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="biblia.css">
 </head>
 <body class="bible-page">
 <header class="bible-toolbar bible-overlay">
   <button class="bible-icon" id="backBible" aria-label="Voltar">←</button>
-  <div class="bible-title"><strong>Bíblia Sagrada</strong><small id="resumeLabel">Leitura salva automaticamente</small></div>
+  <div class="bible-title"><strong>Bíblia Sagrada</strong><small id="resumeLabel">Bíblia Livre · leitura salva automaticamente</small></div>
   <button class="bible-icon" id="fullscreenBtn" aria-label="Tela inteira">⛶</button>
 </header>
-<section class="bible-controls bible-overlay">
-  <button id="prevPage" aria-label="Página anterior">‹</button>
-  <label>Página <input id="pageNumber" type="number" min="1" value="1"> <span id="pageCount">/ —</span></label>
-  <button id="nextPage" aria-label="Próxima página">›</button>
+<section class="bible-controls bible-overlay" aria-label="Controles da Bíblia">
+  <select id="bookSelect" aria-label="Livro"></select>
+  <select id="chapterSelect" aria-label="Capítulo"></select>
+  <button id="prevPage" aria-label="Capítulo anterior">‹</button>
+  <span id="chapterLabel">—</span>
+  <button id="nextPage" aria-label="Próximo capítulo">›</button>
 </section>
-<main class="pdf-reader" id="reader"><div id="loading">Carregando a Bíblia…</div><canvas id="pdfCanvas"></canvas></main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<main class="bible-reader" id="reader">
+  <article class="bible-paper" id="bibleContent">
+    <div id="loading">Carregando a Bíblia…</div>
+  </article>
+</main>
 <script src="biblia.js"></script>
 </body>
 </html>
