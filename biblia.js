@@ -1,30 +1,30 @@
-const DEFAULT_PDF='./biblia.pdf';
-const PAGE_KEY='voz-do-pai-biblia-page';
-const canvas=document.getElementById('pdfCanvas');
-const ctx=canvas.getContext('2d');
-const loading=document.getElementById('loading');
-const pageNumber=document.getElementById('pageNumber');
-const pageCount=document.getElementById('pageCount');
-const resumeLabel=document.getElementById('resumeLabel');
-const page=document.querySelector('.bible-page');
-const reader=document.querySelector('.pdf-reader');
-let pdfDoc=null,pageNum=Math.max(1,parseInt(localStorage.getItem(PAGE_KEY)||'1',10)||1),rendering=false,pendingPage=null,hideTimer=null,touchStartX=0,touchStartY=0,touchMoved=false;
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-function savePage(){if(pdfDoc)localStorage.setItem(PAGE_KEY,String(pageNum));}
-function updateControls(){pageNumber.value=pageNum;pageCount.textContent=`/ ${pdfDoc?pdfDoc.numPages:'—'}`;resumeLabel.textContent=`Página ${pageNum}${pdfDoc?' de '+pdfDoc.numPages:''} · salva automaticamente`;}
-function showControls(){page.classList.remove('controls-hidden');clearTimeout(hideTimer);hideTimer=setTimeout(hideControls,4000)}
+const SOURCE='https://raw.githubusercontent.com/blivre/BibliaLivre/master/textos/f4/geral/';
+const BOOKS=[
+['Gênesis','gen'],['Êxodo','exo'],['Levítico','lev'],['Números','num'],['Deuteronômio','deu'],['Josué','jos'],['Juízes','jz'],['Rute','rt'],['1 Samuel','1sa'],['2 Samuel','2sa'],['1 Reis','1rs'],['2 Reis','2rs'],['1 Crônicas','1crn'],['2 Crônicas','2crn'],['Esdras','ed'],['Neemias','ne'],['Ester','et'],['Jó','job'],['Salmos','sl'],['Provérbios','pv'],['Eclesiastes','ec'],['Cânticos','ct'],['Isaías','is'],['Jeremias','jr'],['Lamentações','lm'],['Ezequiel','ez'],['Daniel','dn'],['Oseias','os'],['Joel','jl'],['Amós','am'],['Obadias','ob'],['Jonas','jn'],['Miqueias','mq'],['Naum','na'],['Habacuque','hc'],['Sofonias','sf'],['Ageu','ag'],['Zacarias','zc'],['Malaquias','ml'],['Mateus','mt'],['Marcos','mc'],['Lucas','lc'],['João','jo'],['Atos','at'],['Romanos','rm'],['1 Coríntios','1cor'],['2 Coríntios','2cor'],['Gálatas','gl'],['Efésios','ef'],['Filipenses','fp'],['Colossenses','cl'],['1 Tessalonicenses','1tes'],['2 Tessalonicenses','2tes'],['1 Timóteo','1tim'],['2 Timóteo','2tim'],['Tito','tt'],['Filemom','fm'],['Hebreus','hb'],['Tiago','tg'],['1 Pedro','1ped'],['2 Pedro','2ped'],['1 João','1joao'],['2 João','2joao'],['3 João','3joao'],['Judas','jd'],['Apocalipse','ap']
+];
+const BOOK_KEY='voz-do-pai-biblia-book', CHAPTER_KEY='voz-do-pai-biblia-chapter';
+const bookSelect=document.getElementById('bookSelect'), chapterSelect=document.getElementById('chapterSelect'), content=document.getElementById('bibleContent');
+const chapterLabel=document.getElementById('chapterLabel'), resumeLabel=document.getElementById('resumeLabel'), page=document.querySelector('.bible-page'), reader=document.getElementById('reader');
+let currentBook=Math.max(0,Math.min(BOOKS.length-1,parseInt(localStorage.getItem(BOOK_KEY)||'0',10)||0));
+let currentChapter=Math.max(1,parseInt(localStorage.getItem(CHAPTER_KEY)||'1',10)||1), chapters={}, hideTimer=null, touchStartX=0, touchStartY=0, touchMoved=false;
+function savePosition(){localStorage.setItem(BOOK_KEY,String(currentBook));localStorage.setItem(CHAPTER_KEY,String(currentChapter))}
+function showControls(){page.classList.remove('controls-hidden');clearTimeout(hideTimer);hideTimer=setTimeout(hideControls,4500)}
 function hideControls(){clearTimeout(hideTimer);page.classList.add('controls-hidden')}
 function toggleControls(){page.classList.contains('controls-hidden')?showControls():hideControls()}
-async function renderPage(num){if(!pdfDoc)return;if(num<1)num=1;if(num>pdfDoc.numPages)num=pdfDoc.numPages;pageNum=num;savePage();updateControls();if(rendering){pendingPage=num;return}rendering=true;loading.textContent='Abrindo página…';loading.style.display='block';try{const pdfPage=await pdfDoc.getPage(num);const base=pdfPage.getViewport({scale:1});const maxWidth=Math.max(280,Math.min(window.innerWidth-12,1100));const maxHeight=Math.max(400,window.innerHeight-12);const scale=Math.min(maxWidth/base.width,maxHeight/base.height);const viewport=pdfPage.getViewport({scale});const ratio=window.devicePixelRatio||1;canvas.width=Math.floor(viewport.width*ratio);canvas.height=Math.floor(viewport.height*ratio);canvas.style.width=`${viewport.width}px`;canvas.style.height=`${viewport.height}px`;ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,viewport.width,viewport.height);await pdfPage.render({canvasContext:ctx,viewport}).promise}catch(e){loading.textContent='Não foi possível abrir esta página.';console.error(e)}finally{rendering=false;loading.style.display='none';if(pendingPage&&pendingPage!==pageNum){const next=pendingPage;pendingPage=null;renderPage(next)}else pendingPage=null}}
-async function openSource(source){loading.textContent='Carregando a Bíblia…';loading.style.display='block';try{pdfDoc=await pdfjsLib.getDocument(source).promise;if(pageNum>pdfDoc.numPages)pageNum=pdfDoc.numPages;updateControls();await renderPage(pageNum);hideControls()}catch(e){loading.textContent='Não foi possível carregar a Bíblia. Verifique se o arquivo biblia.pdf está no repositório.';console.error(e)}}
-document.getElementById('prevPage').onclick=e=>{e.stopPropagation();renderPage(pageNum-1);showControls()};
-document.getElementById('nextPage').onclick=e=>{e.stopPropagation();renderPage(pageNum+1);showControls()};
-pageNumber.onchange=e=>{e.stopPropagation();renderPage(parseInt(pageNumber.value,10)||1);showControls()};
+function fillBooks(){bookSelect.innerHTML=BOOKS.map((b,i)=>`<option value="${i}">${b[0]}</option>`).join('');bookSelect.value=String(currentBook)}
+function cleanText(text){return text.replace(/\r/g,'').replace(/\\fn[\s\S]*?\\\*fn/g,'').replace(/\\f[a-z-]*\n?/g,'').replace(/\n+/g,' ').replace(/\s{2,}/g,' ').trim()}
+function parseBible(raw){const out={};const re=/\\v\s+[^.\n]+\.(\d+)\.(\d+)\s*\n([\s\S]*?)(?=\n\\v\s+|$)/g;let m;while((m=re.exec(raw))){const ch=Number(m[1]),v=Number(m[2]);if(!out[ch])out[ch]=[];const text=cleanText(m[3]);if(text)out[ch].push({v,text})}return out}
+async function loadBook(index){currentBook=index;bookSelect.value=String(index);chapterSelect.innerHTML='<option>Carregando…</option>';chapterSelect.disabled=true;content.innerHTML='<div id="loading">Carregando '+BOOKS[index][0]+'…</div>';resumeLabel.textContent='Carregando a Bíblia Livre…';try{const response=await fetch(SOURCE+BOOKS[index][1]+'.txt',{cache:'no-cache'});if(!response.ok)throw new Error('HTTP '+response.status);chapters=parseBible(await response.text());const nums=Object.keys(chapters).map(Number).sort((a,b)=>a-b);if(!nums.length)throw new Error('Nenhum capítulo encontrado');if(!nums.includes(currentChapter))currentChapter=nums[0];chapterSelect.innerHTML=nums.map(n=>`<option value="${n}">Capítulo ${n}</option>`).join('');chapterSelect.disabled=false;chapterSelect.value=String(currentChapter);renderChapter()}catch(e){content.innerHTML='<div id="loading">Não foi possível carregar este livro da Bíblia Livre.<br><small>Verifique sua conexão com a internet.</small></div>';chapterSelect.innerHTML='<option>—</option>';console.error(e)}}
+function renderChapter(){const verses=chapters[currentChapter]||[],name=BOOKS[currentBook][0];content.innerHTML=`<div class="bible-source">BÍBLIA LIVRE</div><h1>${name}</h1><div class="chapter-number">${currentChapter}</div><div class="verses">${verses.map(x=>`<p><sup>${x.v}</sup>${x.text}</p>`).join('')}</div><div class="bible-credit">Todas as Escrituras em português são da Bíblia Livre (BLIVRE), Copyright © Diego Santos, Mario Sérgio e Marco Teles. Licença Creative Commons Atribuição 3.0 Brasil. <span>Fonte: BibliaLivre</span></div>`;chapterLabel.textContent=`${name} ${currentChapter}`;resumeLabel.textContent=`${name} ${currentChapter} · salvo automaticamente`;savePosition();reader.scrollTop=0}
+function changeChapter(delta){const nums=Object.keys(chapters).map(Number).sort((a,b)=>a-b);if(!nums.length)return;let i=nums.indexOf(currentChapter);i=Math.max(0,Math.min(nums.length-1,i+delta));if(nums[i]!==currentChapter){currentChapter=nums[i];chapterSelect.value=String(currentChapter);renderChapter()}showControls()}
+bookSelect.addEventListener('change',()=>{currentChapter=1;loadBook(Number(bookSelect.value));showControls()});
+chapterSelect.addEventListener('change',()=>{currentChapter=Number(chapterSelect.value);renderChapter();showControls()});
+document.getElementById('prevPage').onclick=e=>{e.stopPropagation();changeChapter(-1)};
+document.getElementById('nextPage').onclick=e=>{e.stopPropagation();changeChapter(1)};
 document.getElementById('backBible').onclick=e=>{e.stopPropagation();history.length>1?history.back():(location.href='index.html')};
-document.getElementById('fullscreenBtn').onclick=async e=>{e.stopPropagation();try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();setTimeout(()=>renderPage(pageNum),150);showControls()}catch(err){console.error(err)}};
-reader.addEventListener('click',e=>{if(touchMoved){touchMoved=false;return}toggleControls()});
+document.getElementById('fullscreenBtn').onclick=async e=>{e.stopPropagation();try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();showControls()}catch(err){console.error(err)}};
+reader.addEventListener('click',e=>{if(touchMoved){touchMoved=false;return}if(e.target.closest('button,select'))return;toggleControls()});
 reader.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;touchMoved=false},{passive:true});
-reader.addEventListener('touchmove',e=>{if(e.touches.length!==1)return;const dx=e.touches[0].clientX-touchStartX;const dy=e.touches[0].clientY-touchStartY;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)){touchMoved=true;e.preventDefault()}},{passive:false});
-reader.addEventListener('touchend',e=>{if(!touchMoved)return;const dx=e.changedTouches[0].clientX-touchStartX;const threshold=Math.max(45,window.innerWidth*.12);if(Math.abs(dx)>=threshold){if(dx<0)renderPage(pageNum+1);else renderPage(pageNum-1);showControls()}touchMoved=false},{passive:true});
-document.addEventListener('fullscreenchange',()=>setTimeout(()=>renderPage(pageNum),100));
-window.addEventListener('resize',()=>{if(pdfDoc)renderPage(pageNum)});window.addEventListener('beforeunload',savePage);updateControls();hideControls();openSource(DEFAULT_PDF);
+reader.addEventListener('touchmove',e=>{if(e.touches.length!==1)return;const dx=e.touches[0].clientX-touchStartX,dy=e.touches[0].clientY-touchStartY;if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)){touchMoved=true;e.preventDefault()}},{passive:false});
+reader.addEventListener('touchend',e=>{if(!touchMoved)return;const dx=e.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>=Math.max(55,window.innerWidth*.14))changeChapter(dx<0?1:-1);touchMoved=false},{passive:true});
+fillBooks();loadBook(currentBook);hideControls();
