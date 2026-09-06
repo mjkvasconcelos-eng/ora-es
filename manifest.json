@@ -1,8 +1,9 @@
 {
-  "name":"Orações — Um momento com Deus",
-  "short_name":"Orações",
+  "name":"Voz do Pai — Orar é falar com Deus",
+  "short_name":"Voz do Pai",
   "description":"Orações diárias para fortalecer sua fé e esperança.",
   "start_url":"./",
+  "scope":"./",
   "display":"standalone",
   "background_color":"#17120d",
   "theme_color":"#17120d",
