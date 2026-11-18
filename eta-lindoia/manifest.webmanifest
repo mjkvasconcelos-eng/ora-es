@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "ETA Lindóia — Controle de Vazão",
+  "short_name": "ETA Lindóia",
+  "description": "Controle de vazão de Sulfato e Carbonato com cronômetro e histórico automático.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c1721",
+  "theme_color": "#10212d",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
